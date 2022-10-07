@@ -63,6 +63,7 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.PUT,"/api/users/giveRole").hasAuthority(Role.ADMIN.name())
                 .mvcMatchers(HttpMethod.DELETE,"/api/users/**").hasAnyAuthority(Role.ADMIN.name(),Role.USER.name())
                 .mvcMatchers(HttpMethod.PUT,"/api/users/**").hasAnyAuthority(Role.ADMIN.name(),Role.USER.name())
+                .mvcMatchers(HttpMethod.GET,"/api/posts").permitAll()
 
                 .mvcMatchers("/").permitAll()
                 .and().exceptionHandling().accessDeniedPage("/access-denied")

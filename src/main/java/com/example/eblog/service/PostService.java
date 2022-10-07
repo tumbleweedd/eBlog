@@ -11,4 +11,12 @@ import java.security.Principal;
 
 public interface PostService {
     ResponseEntity<?> addNewPost(UserDetailsImpl currentUser, PostDTO post);
+
+    ResponseEntity<?> getPostList();
+
+    ResponseEntity<?> getPostById(Long id);
+
+    ResponseEntity<?> deletePostById(Long id);
+
+    ResponseEntity<?> updatePost(Long id);
 }

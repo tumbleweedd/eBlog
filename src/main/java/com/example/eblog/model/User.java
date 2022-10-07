@@ -2,10 +2,7 @@ package com.example.eblog.model;
 
 import com.example.eblog.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -13,7 +10,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

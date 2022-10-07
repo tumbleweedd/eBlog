@@ -7,17 +7,17 @@ import com.example.eblog.repository.PostRepository;
 import com.example.eblog.repository.TagRepository;
 import com.example.eblog.repository.UserRepository;
 import com.example.eblog.service.PostService;
+import com.example.eblog.util.EmptyJsonResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
+
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
@@ -45,6 +45,7 @@ public class PostServiceImpl implements PostService {
             tags.add(tag);
         }
 
+
         Post postOne = Post.builder()
                 .body(post.getBody())
                 .head(post.getTitle())
@@ -55,5 +56,40 @@ public class PostServiceImpl implements PostService {
         postRepository.save(postOne);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<?> getPostList() {
+        List<Post> posts = postRepository.findAll();
+        if (!posts.isEmpty()) {
+            return new ResponseEntity<>(postRepository.findAll().stream().map(PostDTO::new).collect(Collectors.toList()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getPostById(Long id) {
+        if (postRepository.findById(id).isPresent()) {
+            Optional<Post> post = postRepository.findById(id);
+            return new ResponseEntity<>(new PostDTO(post.get()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> deletePostById(Long id) {
+        if (postRepository.findById(id).isPresent()) {
+            postRepository.delete(postRepository.findById(id).get());
+            return new ResponseEntity<>("Delete success", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updatePost(Long id) {
+        return null;
     }
 }
