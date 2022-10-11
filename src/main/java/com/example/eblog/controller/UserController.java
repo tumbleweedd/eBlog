@@ -61,4 +61,11 @@ public class UserController {
         return userService.updateUser(username, loggedUser, updateProfileDTO);
     }
 
+    @GetMapping("/{username}/posts")
+    public ResponseEntity<?> getUserPosts(@PathVariable String username) {
+        return userService.getUserPosts(username);
+    }
+
+
+
 }

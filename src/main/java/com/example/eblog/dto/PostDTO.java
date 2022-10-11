@@ -19,6 +19,7 @@ public class PostDTO {
     private String body;
     private String category;
     private List<String> tags;
+    private List<String> comment;
 
     public PostDTO(Post post) {
         this.id = post.getId();
@@ -26,11 +27,17 @@ public class PostDTO {
         this.body = post.getBody();
         this.category = getCategoryName(post);
         this.tags = getTagsName(post);
+        this.comment = getComments(post);
     }
 
     private List<String> getTagsName(Post post) {
         List<Tag> tagList = post.getTags();
         return tagList.stream().map(Tag::getName).collect(Collectors.toList());
+    }
+
+    private List<String> getComments(Post post) {
+        List<Comment> commentList = post.getComments();
+        return commentList.stream().map(Comment::getBody).collect(Collectors.toList());
     }
 
     private String getCategoryName(Post post) {

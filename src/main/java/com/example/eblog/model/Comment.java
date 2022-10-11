@@ -37,4 +37,8 @@ public class Comment {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
 
+    public Comment(String comment) {
+        super();
+        this.body = comment;
+    }
 }

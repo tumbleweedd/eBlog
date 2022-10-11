@@ -1,14 +1,13 @@
 package com.example.eblog.service.impl;
 
-import com.example.eblog.dto.UserForAdminDTO;
-import com.example.eblog.dto.UserProfileInfoDTO;
-import com.example.eblog.dto.UserRoleDTO;
-import com.example.eblog.dto.UserUpdateProfileDTO;
+import com.example.eblog.dto.*;
 import com.example.eblog.enums.Role;
 import com.example.eblog.exception.BadRequestExceptionThrower;
 import com.example.eblog.exception.UserNotFound;
+import com.example.eblog.model.Post;
 import com.example.eblog.model.User;
 import com.example.eblog.model.UserDetailsImpl;
+import com.example.eblog.repository.PostRepository;
 import com.example.eblog.repository.UserRepository;
 import com.example.eblog.service.UserService;
 import com.example.eblog.util.EmptyJsonResponse;
@@ -26,10 +25,12 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PostRepository postRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -133,6 +134,20 @@ public class UserServiceImpl implements UserService {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @Override
+    public ResponseEntity<?> getUserPosts(String username) {
+        List<Post> postList = postRepository.findAllPostsByUserId(userRepository.findUserByUsername(username).getId());
+        System.out.println(postList);
+
+        if (!postList.isEmpty()) {
+            return new ResponseEntity<>(
+                    postList.stream().map(PostDTO::new).collect(Collectors.toList()),
+                    HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+
     }
 
     @Override

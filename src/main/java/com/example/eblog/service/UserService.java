@@ -21,4 +21,6 @@ public interface UserService {
     ResponseEntity<?> deleteUser(String username, UserDetailsImpl loggedUser);
 
     ResponseEntity<?> updateUser(String username, UserDetailsImpl loggedUser, UserUpdateProfileDTO updateProfileDTO);
+
+    ResponseEntity<?> getUserPosts(String username);
 }
