@@ -29,50 +29,35 @@ public class PhotoController {
     public ResponseEntity<String> upload(@RequestParam("photo") MultipartFile photo) {
         try {
             photoService.save(photo);
-
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(String.format("File uploaded successfully: %s", photo.getOriginalFilename()));
+            return new ResponseEntity<>(
+                    String.format("Изображение успешно загружено: %s", photo.getOriginalFilename()),
+                    HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(String.format("Could not upload the file: %s!", photo.getOriginalFilename()));
+            return new ResponseEntity<>(
+                    String.format("Не удалось загрузить изображение: %s!", photo.getOriginalFilename()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping
-    public List<PhotoDTO> list() {
-        return photoService.getAllFiles()
-                .stream()
-                .map(fileEntity -> mapToFileResponse(fileEntity))
-                .collect(Collectors.toList());
+    public ResponseEntity<?> photoList() {
+        return photoService.getAllFiles();
     }
 
-    private PhotoDTO mapToFileResponse(Photo fileEntity) {
-        String downloadURL = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/files/")
-                .toUriString();
-        PhotoDTO fileResponse = new PhotoDTO();
-        fileResponse.setTitle(fileEntity.getTitle());
-        fileResponse.setContentType(fileEntity.getContentType());
-        fileResponse.setSize(fileEntity.getSize());
-        fileResponse.setUrl(downloadURL);
-
-        return fileResponse;
-    }
 
     @GetMapping("{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable Long id) {
-        Optional<Photo> fileEntityOptional = photoService.getFile(id);
+        Optional<Photo> photoOptional = photoService.getFile(id);
 
-        if (!fileEntityOptional.isPresent()) {
-            return ResponseEntity.notFound()
-                    .build();
+        if (photoOptional.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Photo fileEntity = fileEntityOptional.get();
+        Photo photo = photoOptional.get();
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileEntity.getTitle() + "\"")
-                .contentType(MediaType.valueOf(fileEntity.getContentType()))
-                .body(fileEntity.getUrl());
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + photo.getTitle() + "\"")
+                .contentType(MediaType.valueOf(photo.getContentType()))
+                .body(photo.getUrl());
     }
 
 

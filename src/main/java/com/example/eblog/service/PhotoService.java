@@ -1,6 +1,7 @@
 package com.example.eblog.service;
 
 import com.example.eblog.model.Photo;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -10,5 +11,5 @@ import java.util.Optional;
 public interface PhotoService {
     void save(MultipartFile file) throws IOException;
     Optional<Photo> getFile(Long id);
-    List<Photo> getAllFiles();
+    ResponseEntity<?> getAllFiles();
 }
