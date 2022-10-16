@@ -42,15 +42,16 @@ public class UserServiceImpl implements UserService {
             BadRequestExceptionThrower.throwUserExistsException();
         }
 
-        User newUSer = User.builder()
+        User newUser = User.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .name(user.getName())
                 .lastname(user.getLastname())
-                .role(user.getRole())
-                .isAccountNonLocked(user.isAccountNonLocked())
+                .role(Role.USER)
+                .isAccountNonLocked(true)
                 .build();
-        return new ResponseEntity<>(new UserForAdminDTO(newUSer), HttpStatus.CREATED);
+        userRepository.save(newUser);
+        return new ResponseEntity<>(new UserForAdminDTO(newUser), HttpStatus.CREATED);
     }
 
     @Override

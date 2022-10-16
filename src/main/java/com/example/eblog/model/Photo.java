@@ -19,13 +19,16 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Column(name = "title")
     private String title;
 
-    @NotBlank
+    private Long size;
+
+    private String contentType;
+
+    @Lob
     @Column(name = "url")
-    private String url;
+    private byte[] url;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id", referencedColumnName = "album_id")

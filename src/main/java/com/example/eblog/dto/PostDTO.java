@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -19,15 +20,22 @@ public class PostDTO {
     private String body;
     private String category;
     private List<String> tags;
-    private List<String> comment;
+    private Map<String, List<String>> comment;
+    private String date;
 
     public PostDTO(Post post) {
         this.id = post.getId();
+        this.date = dateFormat(post);
         this.title = post.getHead();
         this.body = post.getBody();
         this.category = getCategoryName(post);
         this.tags = getTagsName(post);
-        this.comment = getComments(post);
+        this.comment = getComment(post);
+    }
+
+    private String dateFormat(Post post) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return format.format(post.getDateCreation());
     }
 
     private List<String> getTagsName(Post post) {
@@ -35,9 +43,20 @@ public class PostDTO {
         return tagList.stream().map(Tag::getName).collect(Collectors.toList());
     }
 
-    private List<String> getComments(Post post) {
+    private Map<String, List<String>> getComment(Post post) {
+        Map<String, List<String>> commentMap = new HashMap<>();
         List<Comment> commentList = post.getComments();
-        return commentList.stream().map(Comment::getBody).collect(Collectors.toList());
+
+
+        for (Comment c : commentList) {
+            commentMap.put(c.getUser().getUsername(),
+                    commentList.stream()
+                            .filter(e -> Objects.equals(e.getUser().getId(), c.getUser().getId()))
+                            .map(Comment::getBody)
+                            .collect(Collectors.toList()));
+        }
+
+        return commentMap;
     }
 
     private String getCategoryName(Post post) {

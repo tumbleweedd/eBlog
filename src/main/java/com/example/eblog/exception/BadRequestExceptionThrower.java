@@ -24,5 +24,9 @@ public class BadRequestExceptionThrower extends ExceptionThrower {
     public static void throwUnMatchingPasswords() {
         throw new ResponseStatusException(status, "Пароли должны совпадать");
     }
+
+    public static void throwPostNotFoundException() {
+        throw new ResponseStatusException(status,"Post not found");
+    }
 }
 

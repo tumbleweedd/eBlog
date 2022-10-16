@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,9 +61,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public ResponseEntity<?> getPostList() {
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSSSSS");
         List<Post> posts = postRepository.findAll();
         if (!posts.isEmpty()) {
-            return new ResponseEntity<>(postRepository.findAll().stream().map(PostDTO::new).collect(Collectors.toList()), HttpStatus.OK);
+            List<PostDTO> postDTOS = new ArrayList<>(postRepository.findAll().stream().map(PostDTO::new).toList());
+            Collections.reverse(postDTOS);
+            return new ResponseEntity<>(postDTOS,
+                    HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
         }
